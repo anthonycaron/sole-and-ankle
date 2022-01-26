@@ -5,6 +5,12 @@ import { COLORS, WEIGHTS } from '../../constants';
 import { formatPrice, pluralize, isNewShoe } from '../../utils';
 import Spacer from '../Spacer';
 
+const variantImageText = {
+  default: '',
+  'on-sale': 'sale',
+  'new-release': 'just released!',
+}
+
 const ShoeCard = ({
   slug,
   name,
@@ -30,20 +36,42 @@ const ShoeCard = ({
     : isNewShoe(releaseDate)
       ? 'new-release'
       : 'default'
+  const isOnSale = variant === 'on-sale';
+  const imageText = variantImageText[variant];
 
   return (
     <Wrapper>
       <Link href={`/shoe/${slug}`}>
         <ImageWrapper>
+          {imageText && (
+            <ImageBanner variant={variant}>
+              {imageText}
+            </ImageBanner>
+          )}
+
           <Image alt="" src={imageSrc} />
         </ImageWrapper>
+
         <Spacer size={12} />
+
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+
+          <Price isOnSale={isOnSale}>
+            {formatPrice(price)}
+          </Price>
         </Row>
+
         <Row>
-          <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          <ColorInfo>
+            {pluralize('Color', numOfColors)}
+          </ColorInfo>
+
+          {isOnSale && (
+            <SalePrice>
+              {formatPrice(salePrice)}
+            </SalePrice>
+          )}
         </Row>
       </Link>
     </Wrapper>
@@ -63,11 +91,30 @@ const ImageWrapper = styled.div`
   position: relative;
 `;
 
+const ImageBanner = styled.div`
+  position: absolute;
+  top: 12px;
+  right: -4px;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 10px;
+  background-color: ${p => p.variant === 'on-sale' ? COLORS.primary : COLORS.secondary};
+  color: ${COLORS.white};
+  border-radius: 2px;
+  font-family: Raleway;
+  font-weight: ${WEIGHTS.bold};
+  font-size: ${14 / 18}rem;
+  text-transform: capitalize;
+`
+
 const Image = styled.img`
   width: 100%;
 `;
 
 const Row = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
   font-size: 1rem;
 `;
 
@@ -76,7 +123,10 @@ const Name = styled.h3`
   color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  text-decoration: ${p => p.isOnSale && 'line-through'};
+  color: ${p => p.isOnSale && COLORS.gray[700]};
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
