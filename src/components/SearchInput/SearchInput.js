@@ -5,7 +5,7 @@ import { COLORS } from '../../constants';
 import VisuallyHidden from '../VisuallyHidden';
 import Icon from '../Icon';
 
-const SearchInput = ({ label, ...delegated }) => {
+const SearchInput = ({ label, className, ...delegated }) => {
   return (
     <Label>
       <VisuallyHidden>Search</VisuallyHidden>
@@ -17,6 +17,7 @@ const SearchInput = ({ label, ...delegated }) => {
 
 const Label = styled.label`
   position: relative;
+  margin-left: auto;s
 `;
 
 const Input = styled.input`
